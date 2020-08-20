@@ -12,12 +12,14 @@
             gradient="to top right, rgba(63,81,181,.8), rgba(92,107,192,.9)"
           ></v-img>
         </template> -->
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+        <v-btn text fab @click="$router.go(-1)">
+          <v-icon>fas fa-arrow-left</v-icon>
+        </v-btn>
         <v-toolbar-title>Cine APP</v-toolbar-title>
       </v-app-bar>
       <v-main>
         <v-container>
-          <Cartelera id="content" :items="peliculas" />
+          <Sinopsis :pelicula="pelicula" />
         </v-container>
       </v-main>
     </div>
@@ -25,28 +27,15 @@
 </template>
 
 <script>
-import Cartelera from '@/components/Cartelera'
+import Sinopsis from '@/components/Sinopsis'
 export default {
-  name: 'Home',
   components: {
-    Cartelera
+    Sinopsis
   },
-  data () {
-    return {
-      peliculas: []
-    }
-  },
-  beforeMount () {
-    this.getCartelera()
-  },
-  methods: {
-    async getCartelera () {
-      const { data } = await this.$api.get('/peliculas?estado_eq=activo')
-      const urlImg = process.env.VUE_APP_IMG
-      this.peliculas = data.map(i => ({
-        ...i,
-        poster: `${urlImg}/w500${i.data.poster_path}`
-      }))
+  props: {
+    pelicula: {
+      type: Object,
+      default: () => null
     }
   }
 }

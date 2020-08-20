@@ -1,24 +1,34 @@
-# cine_app_frontend
-
-## Project setup
+# Cine APP frontend
+SPA para la reservación de boletos de cine
+## Intrucciones de instalación
+Crear el archivo ```.env``` en la raíz del proyecto completar los datos requeridos, basado en el archivo ```.env.example```
+```
+VUE_APP_API=<<URL del API>>
+VUE_APP_IMG=<<URL base para obtener las imagenes de TMDB>>
+```
+Ejecutar los siguientes comandos
 ```
 yarn install
 ```
+o
+```
+npm install
+```
 
-### Compiles and hot-reloads for development
+### Iniciar en mode de desarrollo
 ```
 yarn serve
 ```
+o
+```
+npm run serve
+```
 
-### Compiles and minifies for production
+### Compilar y minificar para producción
 ```
 yarn build
 ```
-
-### Lints and fixes files
+o
 ```
-yarn lint
+npm run build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
