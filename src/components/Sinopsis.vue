@@ -7,11 +7,15 @@
         </v-col>
         <v-col cols="12" md="6">
           <h1 class="h4 primary--text py-1 mt-5">{{ pelicula.nombre }}</h1>
-          <h2 class="h6 primary--text mt-1 mb-5">{{ genero }}</h2>
+          <h2 class="h6 primary--text mt-1 my-2">{{ genero }}</h2>
+          <v-chip color="secondary" class="mb-5">Duración {{ pelicula.data.runtime }} min.</v-chip>
           <p class="my-1 subtitle-1 font-weight-bold primary--text">Sinopsis</p>
           <p class="my-1 body-1">{{ pelicula.data.overview }}</p>
+          <p class="my-1 subtitle-1 font-weight-bold primary--text">Funciones</p>
+          <SelectFecha @input="getFunciones" />
+          <FuncionesPelicula :items="funciones" />
           <div v-if="pelicula.youtube_id">
-            <p class="my-1 subtitle-1 font-weight-bold primary--text">Trailer</p>
+            <p class="mt-5 subtitle-1 font-weight-bold primary--text">Trailer</p>
             <div class="ma-lg-5 video-responsive">
               <iframe
                 width="560"
@@ -45,17 +49,34 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
+import FuncionesPelicula from '@/components/FuncionesPelicula'
+import SelectFecha from '@/components/SelectFecha'
 export default {
+  components: {
+    FuncionesPelicula,
+    SelectFecha
+  },
   props: {
     pelicula: {
       type: Object,
       default: () => null
     }
   },
+  data () {
+    return {
+      funciones: []
+    }
+  },
   beforeMount () {
     if (!this.pelicula) {
       this.$router.go(-1)
     }
+    const now = dayjs()
+    this.getFunciones({
+      fecha: now.format('YYYY-MM-DD'),
+      hora: now.format('HH:mm:00.00')
+    })
   },
   computed: {
     genero () {
@@ -76,6 +97,16 @@ export default {
         }))
       }
       return []
+    }
+  },
+  methods: {
+    async getFunciones (funcion) {
+      const fecha = dayjs().format('YYYY-MM-DD')
+      const { data } = await this.$api.get(`/funcions?pelicula=${this.pelicula.id}&fecha_eq=${funcion.fecha}&hora_inicio_gte=${funcion.hora}&_sort=sala:ASC`)
+      this.funciones = data.map(i => ({
+        ...i,
+        hora_inicio: dayjs(`${fecha}T${i.hora_inicio}`).format('HH:mm')
+      }))
     }
   }
 }
