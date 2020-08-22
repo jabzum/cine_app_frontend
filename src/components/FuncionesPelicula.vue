@@ -5,8 +5,9 @@
       :key="item.id"
       color="secondary"
       class="mr-1"
+      @click="$router.push({ name: 'Reserva', params: { funcionID: item.id } })"
     >
-      {{ item.sala.nombre }} {{ item.hora_inicio }}
+      {{ item.sala.nombre }} - {{ item.hora_inicio }}
     </v-chip>
     <v-alert
       v-if="items.length === 0"

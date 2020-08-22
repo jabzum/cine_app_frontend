@@ -14,8 +14,9 @@
               :key="i"
               color="secondary"
               class="mr-1"
+              @click="$router.push({ name: 'Reserva', params: { funcionID: funcion.id } })"
             >
-              {{ funcion.hora_inicio }}
+              {{ funcion.sala.nombre }} - {{ funcion.hora_inicio }}
             </v-chip>
           </v-list-item-subtitle>
         </v-list-item-content>

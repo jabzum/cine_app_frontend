@@ -1,0 +1,160 @@
+<template>
+  <v-card class="asientos">
+    <v-card-text>
+      <v-row align="center" justify="space-around" class="my-4">
+        <div>
+          <v-icon color="primary" class="asientos-item">fas fa-couch</v-icon>
+          Libre
+        </div>
+        <div>
+          <v-icon color="secondary" class="asientos-item">fas fa-couch</v-icon>
+          Seleccionado
+        </div>
+        <div>
+          <v-icon color="accent" class="asientos-item">fas fa-couch</v-icon>
+          No disponible
+        </div>
+      </v-row>
+      <div class="pantalla-container">
+        <div class="pantalla">
+        </div>
+      </div>
+      <ul v-for="(fila, indexFila) in asientos" :key="indexFila" class="asientos-fila">
+        <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
+        <li v-for="(asiento, indexAsiento) in fila" :key="indexAsiento" class="asientos-item">
+          <v-icon
+            :color="asiento.color"
+            @click="setOcupado(asiento)"
+          >fas fa-couch</v-icon>
+        </li>
+        <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
+      </ul>
+    </v-card-text>
+  </v-card>
+</template>
+
+<script>
+export default {
+  props: {
+    boletos: {
+      type: Number,
+      default: () => 1
+    },
+    filas: {
+      type: Number,
+      default: () => 1
+    },
+    columnas: {
+      type: Number,
+      default: () => 1
+    }
+  },
+  data () {
+    return {
+      asientos: [],
+      reservas: [
+        {
+          px: 0,
+          py: 0
+        },
+        {
+          px: 1,
+          py: 3
+        },
+        {
+          px: 5,
+          py: 5
+        },
+        {
+          px: 6,
+          py: 5
+        },
+        {
+          px: 8,
+          py: 3
+        },
+        {
+          px: 9,
+          py: 3
+        }
+      ],
+      seleccionados: []
+    }
+  },
+  beforeMount () {
+    this.createAsientos()
+  },
+  methods: {
+    createAsientos () {
+      const items = []
+      for (let y = 0; y < this.filas; y++) {
+        const fila = []
+        for (let x = 0; x < this.columnas; x++) {
+          const isReservado = this.reservas.find(i => i.py === y && i.px === x)
+          if (isReservado) {
+            fila.push({
+              px: x,
+              py: y,
+              estado: 'vendido',
+              color: 'accent'
+            })
+            continue
+          }
+          fila.push({
+            id: `${y}${x}`,
+            px: x,
+            py: y,
+            estado: 'libre',
+            color: 'primary'
+          })
+        }
+        items.push(fila)
+      }
+      this.asientos = items
+    },
+    numberToLetter (num) {
+      return String.fromCharCode(65 + num)
+    },
+    setOcupado (asiento) {
+      if (this.seleccionados.length < this.boletos && asiento.estado === 'libre') {
+        asiento.color = 'secondary'
+        asiento.estado = 'reservado'
+        this.seleccionados.push({ ...asiento })
+      } else if (asiento.estado === 'reservado') {
+        asiento.color = 'primary'
+        asiento.estado = 'libre'
+        this.seleccionados = this.seleccionados.filter(i => i.id !== asiento.id)
+      }
+    }
+  }
+}
+</script>
+
+<style>
+.asientos-fila {
+  padding: 0;
+  margin: 1em 0;
+  display: flex;
+  justify-content: space-between;
+}
+.asientos-item {
+  list-style: none;
+  transform: rotate(180deg);
+}
+.asientos-letra {
+  list-style: none;
+}
+.pantalla-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  perspective: 146px;
+}
+.pantalla {
+  transform: rotateX(-20deg) rotateY(-1deg);
+  height: 20px;
+  width: 80%;
+  background: #3F51B5;
+  /* border: solid 1px red; */
+}
+</style>
