@@ -13,7 +13,9 @@
           ></v-img>
         </template> -->
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        <v-toolbar-title>Cine APP</v-toolbar-title>
+        <v-toolbar-title>
+          Cine APP <v-icon>fas fa-film</v-icon>
+        </v-toolbar-title>
       </v-app-bar>
       <v-main>
         <v-container>

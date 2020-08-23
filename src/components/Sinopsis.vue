@@ -7,7 +7,17 @@
         </v-col>
         <v-col cols="12" md="6">
           <h1 class="h4 primary--text py-1 mt-5">{{ pelicula.nombre }}</h1>
-          <h2 class="h6 primary--text mt-1 my-2">{{ genero }}</h2>
+          <h2 class="h6 primary--text mt-1 mt-2">{{ genero }}</h2>
+          <v-rating
+            :value="pelicula.data.vote_average / 2"
+            half-increments
+            dense
+            readonly
+            size="14"
+            color="yellow darken-3"
+            background-color="transparent"
+            class="my-2"
+          />
           <v-chip color="secondary" class="mb-5">Duración {{ pelicula.data.runtime }} min.</v-chip>
           <p class="my-1 subtitle-1 font-weight-bold primary--text">Sinopsis</p>
           <p class="my-1 body-1">{{ pelicula.data.overview }}</p>
@@ -38,7 +48,9 @@
             >
               <v-card>
                 <v-img :src="item.photo"></v-img>
-                <p class="subtitle-2 text-center">{{ item.name }}</p>
+                <v-card-text>
+                  <p class="subtitle-2 text-center my-1">{{ item.name }}</p>
+                </v-card-text>
               </v-card>
             </v-col>
           </v-row>

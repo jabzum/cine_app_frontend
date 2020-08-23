@@ -12,18 +12,29 @@
           md="4"
           lg="3"
         >
-          <v-img :src="item.poster">
-            <div class="d-flex flex-column-reverse align-start fill-height">
-              <div class="movie-title white--text text-center">
-                <router-link
-                  :to="{ name: 'Pelicula', params: { pelicula: item }}"
-                  class="text-decoration-none white--text"
-                >
-                  {{ item.nombre }}
-                </router-link>
-              </div>
+          <v-card>
+            <v-img :src="item.poster"></v-img>
+            <div class="d-flex align-center fill-height" style="height: 70px;">
+              <v-card-title class="text-center">{{ item.nombre }}</v-card-title>
             </div>
-          </v-img>
+            <v-rating
+              :value="item.data.vote_average / 2"
+              half-increments
+              dense
+              readonly
+              size="14"
+              color="yellow darken-3"
+              background-color="transparent"
+              class="mx-4"
+            />
+            <v-card-actions>
+              <v-btn
+                text
+                color="secondary"
+                :to="{ name: 'Pelicula', params: { pelicula: item } }"
+              >Sinopsis</v-btn>
+            </v-card-actions>
+          </v-card>
         </v-col>
       </v-row>
     </v-card-text>
@@ -40,15 +51,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.movie-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60px;
-  width: 100%;
-  padding: 5px;
-  background: rgba(0, 0, 0, 0.74);
-}
-</style>

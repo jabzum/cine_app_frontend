@@ -15,7 +15,9 @@
         <v-btn text fab @click="$router.go(-1)">
           <v-icon>fas fa-arrow-left</v-icon>
         </v-btn>
-        <v-toolbar-title>Cine APP</v-toolbar-title>
+        <v-toolbar-title>
+          Cine APP <v-icon>fas fa-film</v-icon>
+        </v-toolbar-title>
       </v-app-bar>
       <v-main>
         <v-container>
