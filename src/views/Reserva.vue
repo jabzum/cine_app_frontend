@@ -81,6 +81,7 @@
                       :filas="funcion.sala.filas"
                       :columnas="funcion.sala.columnas"
                       :boletos="boletos"
+                      :reservas="reservas"
                     />
                   </v-card-text>
                   <v-card-actions>

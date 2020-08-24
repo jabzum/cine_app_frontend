@@ -47,41 +47,21 @@ export default {
     columnas: {
       type: Number,
       default: () => 1
+    },
+    reservas: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
     return {
       asientos: [],
-      reservas: [
-        {
-          px: 0,
-          py: 0
-        },
-        {
-          px: 1,
-          py: 3
-        },
-        {
-          px: 5,
-          py: 5
-        },
-        {
-          px: 6,
-          py: 5
-        },
-        {
-          px: 8,
-          py: 3
-        },
-        {
-          px: 9,
-          py: 3
-        }
-      ],
-      seleccionados: []
+      seleccionados: [],
+      reservados: []
     }
   },
   beforeMount () {
+    this.reservados = this.reservas.reduce((acc, i) => acc.concat(i.boletos), [])
     this.createAsientos()
   },
   methods: {
@@ -90,7 +70,7 @@ export default {
       for (let y = 0; y < this.filas; y++) {
         const fila = []
         for (let x = 0; x < this.columnas; x++) {
-          const isReservado = this.reservas.find(i => i.py === y && i.px === x)
+          const isReservado = this.reservados.find(i => i.py === y && i.px === x)
           if (isReservado) {
             fila.push({
               px: x,
