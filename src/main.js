@@ -4,11 +4,13 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from './plugins/axios'
+import vuelidate from 'vuelidate'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 
 Vue.config.productionTip = false
 Vue.use(axios)
+Vue.use(vuelidate)
 
 new Vue({
   router,

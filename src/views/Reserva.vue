@@ -55,6 +55,7 @@
                           append-icon="fas fa-plus"
                           @click:prepend="boletos = boletos > 0 ? boletos - 1 : 0"
                           @click:append="boletos += 1"
+                          :error-messages="errBoletos"
                         />
                         <h3 class="h6 text-center my-3">Total Q{{ total }}</h3>
                       </v-col>
@@ -64,7 +65,7 @@
                     <v-spacer />
                     <v-btn
                       color="secondary"
-                      @click="step = 2"
+                      @click="selectAsientos()"
                     >
                       Continuar
                       <v-icon dark right>fas fa-arrow-right</v-icon>
@@ -109,6 +110,7 @@
 </template>
 
 <script>
+import { integer, minValue, maxValue, required } from 'vuelidate/lib/validators'
 import SelectorAsientos from '@/components/SelectorAsientos'
 export default {
   props: {
@@ -124,7 +126,9 @@ export default {
     return {
       funcion: null,
       boletos: 0,
-      step: 1
+      step: 1,
+      reservas: [],
+      disponibles: 0
     }
   },
   computed: {
@@ -133,18 +137,50 @@ export default {
         return this.boletos * this.funcion.precio
       }
       return 0
+    },
+    errBoletos () {
+      const errs = []
+      if (!this.$v.boletos.$dirty) return []
+      !this.$v.boletos.integer && errs.push('Ingresa un numero')
+      !this.$v.boletos.required && errs.push('Ingresa la cantidad de boletos')
+      !this.$v.boletos.minValue && errs.push('Debes reservar la menos un boleto')
+      !this.$v.boletos.maxValue && errs.push(`Puedes reservar un máximo de ${this.disponibles} boletos`)
+      return errs
     }
   },
-  beforeMount () {
+  async beforeMount () {
     if (!this.funcionID) {
       this.$router.push({ name: 'Home' })
     }
-    this.getFuncion()
+    await this.getFuncion()
+    this.getReservas()
   },
   methods: {
     async getFuncion () {
       const { data } = await this.$api.get(`/funcions/${this.funcionID}`)
       this.funcion = data
+    },
+    async getReservas () {
+      const { data } = await this.$api.get(`/reservas?funcion=${this.funcionID}`)
+      this.reservas = data
+      const asientosTotal = this.funcion.sala.filas * this.funcion.sala.columnas
+      this.disponibles = asientosTotal - this.reservas.reduce((acc, i) => acc + i.boletos.length, 0)
+    },
+    selectAsientos () {
+      this.$v.boletos.$touch()
+      if (!this.$v.boletos.$invalid) {
+        this.step = 2
+      }
+    }
+  },
+  validations () {
+    return {
+      boletos: {
+        integer,
+        required,
+        minValue: minValue(1),
+        maxValue: maxValue(this.disponibles)
+      }
     }
   }
 }
