@@ -39,6 +39,13 @@
               >
                 Selecciona los asientos
               </v-stepper-step>
+              <v-divider />
+              <v-stepper-step
+                :complete="step === 3"
+                :step="3"
+              >
+                Confirma tu reservación
+              </v-stepper-step>
             </v-stepper-header>
             <v-stepper-items>
               <v-stepper-content :step="1">
@@ -50,14 +57,19 @@
                         <h2 class="h5 text-center my-3">Precio por boleto Q{{ funcion.precio }}</h2>
                         <v-text-field
                           label="Cantidad de boletos"
-                          v-model.number="boletos"
+                          v-model.number="reserva.boletos"
                           prepend-icon="fas fa-minus"
                           append-icon="fas fa-plus"
-                          @click:prepend="boletos = boletos > 0 ? boletos - 1 : 0"
-                          @click:append="boletos += 1"
+                          @click:prepend="reserva.boletos = reserva.boletos > 0 ? reserva.boletos - 1 : 0"
+                          @click:append="reserva.boletos += 1"
                           :error-messages="errBoletos"
                         />
                         <h3 class="h6 text-center my-3">Total Q{{ total }}</h3>
+                        <v-text-field
+                          label="Ingresa tu nombre"
+                          v-model="reserva.nombre"
+                          :error-messages="errNombre"
+                        />
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -74,84 +86,92 @@
                 </v-card>
               </v-stepper-content>
               <v-stepper-content :step="2">
-                <v-card>
-                  <v-card-text>
-                    <SelectorAsientos
-                      v-if="funcion"
-                      :filas="funcion.sala.filas"
-                      :columnas="funcion.sala.columnas"
-                      :boletos="boletos"
-                      :reservas="reservas"
-                    />
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      color="secondary"
-                      @click="step = 1"
-                    >
-                      <v-icon dark left>fas fa-arrow-left</v-icon>
-                      Regresar
-                    </v-btn>
-                    <!-- <v-btn
-                      color="secondary"
-                      @click="step = 3"
-                    >
-                      Continuar
-                    </v-btn> -->
-                  </v-card-actions>
-                </v-card>
+                <SelectorAsientos
+                  v-if="funcion"
+                  :filas="funcion.sala.filas"
+                  :columnas="funcion.sala.columnas"
+                  :boletos="reserva.boletos"
+                  :reservas="reservas"
+                  @prev="step = 1"
+                  @next="setAsientos"
+                />
+              </v-stepper-content>
+              <v-stepper-content :step="3">
+                <ConfirmReserva
+                  :funcion="funcion"
+                  :boletos="reserva.boletos"
+                  @prev="step = 2"
+                  @save="saveReserva()"
+                />
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
         </v-container>
       </v-main>
+      <Loader :loading="loading" />
     </div>
   </v-app>
 </template>
 
 <script>
+import shortid from 'shortid'
 import { integer, minValue, maxValue, required } from 'vuelidate/lib/validators'
-import SelectorAsientos from '@/components/SelectorAsientos'
+import SelectorAsientos from '@/components/reservas/SelectorAsientos'
+import ConfirmReserva from '@/components/reservas/ConfirmReserva'
+import Loader from '@/components/utils/Loader'
 export default {
+  components: {
+    SelectorAsientos,
+    ConfirmReserva,
+    Loader
+  },
   props: {
     funcionID: {
       type: String,
       default: null
     }
   },
-  components: {
-    SelectorAsientos
-  },
   data () {
     return {
       funcion: null,
-      boletos: 0,
+      reserva: {
+        boletos: 0,
+        nombre: ''
+      },
+      asientosSelected: [],
       step: 1,
       reservas: [],
-      disponibles: 0
+      disponibles: 0,
+      loading: false
     }
   },
   computed: {
     total () {
       if (this.funcion) {
-        return this.boletos * this.funcion.precio
+        return this.reserva.boletos * this.funcion.precio
       }
       return 0
     },
     errBoletos () {
       const errs = []
-      if (!this.$v.boletos.$dirty) return []
-      !this.$v.boletos.integer && errs.push('Ingresa un numero')
-      !this.$v.boletos.required && errs.push('Ingresa la cantidad de boletos')
-      !this.$v.boletos.minValue && errs.push('Debes reservar la menos un boleto')
-      !this.$v.boletos.maxValue && errs.push(`Puedes reservar un máximo de ${this.disponibles} boletos`)
+      if (!this.$v.reserva.boletos.$dirty) return []
+      !this.$v.reserva.boletos.integer && errs.push('Ingresa un numero')
+      !this.$v.reserva.boletos.required && errs.push('Ingresa la cantidad de boletos')
+      !this.$v.reserva.boletos.minValue && errs.push('Debes reservar la menos un boleto')
+      !this.$v.reserva.boletos.maxValue && errs.push(`Puedes reservar un máximo de ${this.disponibles} boletos`)
+      return errs
+    },
+    errNombre () {
+      const errs = []
+      if (!this.$v.reserva.nombre.$dirty) return []
+      !this.$v.reserva.nombre.required && errs.push('El nombre es requerido')
       return errs
     }
   },
   async beforeMount () {
     if (!this.funcionID) {
       this.$router.push({ name: 'Home' })
+      return
     }
     await this.getFuncion()
     this.getReservas()
@@ -167,20 +187,58 @@ export default {
       const asientosTotal = this.funcion.sala.filas * this.funcion.sala.columnas
       this.disponibles = asientosTotal - this.reservas.reduce((acc, i) => acc + i.boletos.length, 0)
     },
+    async saveReserva () {
+      try {
+        this.loading = true
+        const codigo = shortid.generate()
+        const reserva = {
+          codigo,
+          funcion: this.funcionID,
+          nombre: this.reserva.nombre
+        }
+        const { data } = await this.$api.post('/reservas', reserva)
+        const boletos = []
+        for (const boleto of this.asientosSelected) {
+          const boletoData = {
+            px: boleto.px,
+            py: boleto.py,
+            reserva: data.id
+          }
+          boletos.push(this.$api.post('/boletos', boletoData))
+        }
+        await Promise.all(boletos)
+        this.$router.push({
+          name: 'ReservaDetail',
+          params: { codigo }
+        })
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        console.log(err)
+        alert('Ha ocurrido un error')
+      }
+    },
+    setAsientos (seleccionados) {
+      this.asientosSelected = [...seleccionados]
+      this.step = 3
+    },
     selectAsientos () {
-      this.$v.boletos.$touch()
-      if (!this.$v.boletos.$invalid) {
+      this.$v.reserva.$touch()
+      if (!this.$v.reserva.$invalid) {
         this.step = 2
       }
     }
   },
   validations () {
     return {
-      boletos: {
-        integer,
-        required,
-        minValue: minValue(1),
-        maxValue: maxValue(this.disponibles)
+      reserva: {
+        boletos: {
+          integer,
+          required,
+          minValue: minValue(1),
+          maxValue: maxValue(this.disponibles)
+        },
+        nombre: { required }
       }
     }
   }

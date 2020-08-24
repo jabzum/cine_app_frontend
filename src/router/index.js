@@ -24,6 +24,12 @@ const routes = [
     props: (route) => ({
       ...route.params
     })
+  },
+  {
+    path: '/reserva/:codigo',
+    name: 'ReservaDetail',
+    component: () => import('@/views/ReservaDetail'),
+    props: true
   }
 ]
 

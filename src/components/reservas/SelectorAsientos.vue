@@ -1,5 +1,5 @@
 <template>
-  <v-card class="asientos">
+  <v-card>
     <v-card-text>
       <v-row align="center" justify="space-around" class="my-4">
         <div>
@@ -30,6 +30,23 @@
         <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
       </ul>
     </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        color="secondary"
+        @click="$emit('prev')"
+      >
+        <v-icon left>fas fa-arrow-left</v-icon>
+        Regresar
+      </v-btn>
+      <v-btn
+        color="secondary"
+        @click="validateNext()"
+      >
+        Continuar
+        <v-icon right>fas fa-arrow-right</v-icon>
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -105,6 +122,13 @@ export default {
         asiento.estado = 'libre'
         this.seleccionados = this.seleccionados.filter(i => i.id !== asiento.id)
       }
+    },
+    validateNext () {
+      if (this.seleccionados.length === this.boletos) {
+        this.$emit('next', this.seleccionados)
+      } else {
+        alert(`Selecciona tus ${this.boletos} asientos`)
+      }
     }
   }
 }
@@ -135,6 +159,5 @@ export default {
   height: 20px;
   width: 80%;
   background: #3F51B5;
-  /* border: solid 1px red; */
 }
 </style>
