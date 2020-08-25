@@ -54,6 +54,11 @@ export default {
           text: 'Mis reservaciones',
           icon: 'fas fa-ticket-alt',
           to: { name: 'Reservas' }
+        },
+        {
+          text: 'Comidas y bebidas',
+          icon: 'fas fa-utensils',
+          to: { name: 'Combos' }
         }
       ]
     }

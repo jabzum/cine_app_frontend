@@ -23,6 +23,11 @@ const routes = [
         name: 'ReservaDetail',
         component: () => import('@/views/ReservaDetail'),
         props: true
+      },
+      {
+        path: '/comida',
+        name: 'Combos',
+        component: () => import('@/views/ListCombos')
       }
     ]
   },
