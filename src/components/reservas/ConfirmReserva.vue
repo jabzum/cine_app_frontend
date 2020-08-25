@@ -8,8 +8,8 @@
       </div>
       <v-row justify="center">
         <v-col cols="12" md="6" lg="4">
-          <p class="subtitle-1">Cantidad de boletos: {{ boletos }}</p>
-          <p class="subtitle-1">Precio por boleto: {{ funcion.precio }}</p>
+          <p class="subtitle-1 my-1">Cantidad de boletos: {{ boletos }}</p>
+          <p class="subtitle-1 my-1">Precio por boleto: Q{{ funcion.precio }}</p>
           <v-divider />
           <p class="subtitle-1 font-weight-bold text-right">Total: Q{{ boletos * funcion.precio }}</p>
         </v-col>
