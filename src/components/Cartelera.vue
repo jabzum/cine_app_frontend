@@ -10,12 +10,12 @@
           :key="item.id"
           cols="6"
           md="4"
-          lg="3"
+          xl="3"
         >
           <v-card>
             <v-img :src="item.poster"></v-img>
             <div class="d-flex align-center fill-height" style="height: 70px;">
-              <v-card-title class="text-center">{{ item.nombre }}</v-card-title>
+              <v-card-title class="text-center subtitle-1">{{ item.nombre }}</v-card-title>
             </div>
             <v-rating
               :value="item.data.vote_average / 2"

@@ -15,20 +15,21 @@
           No disponible
         </div>
       </v-row>
-      <div class="pantalla-container">
-        <div class="pantalla">
+      <div class="asientos">
+        <div class="pantalla-container">
+          <div class="pantalla"></div>
         </div>
+        <ul v-for="(fila, indexFila) in asientos" :key="indexFila" class="asientos-fila">
+          <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
+          <li v-for="(asiento, indexAsiento) in fila" :key="indexAsiento" class="asientos-item">
+            <v-icon
+              :color="asiento.color"
+              @click="setOcupado(asiento)"
+            >fas fa-couch</v-icon>
+          </li>
+          <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
+        </ul>
       </div>
-      <ul v-for="(fila, indexFila) in asientos" :key="indexFila" class="asientos-fila">
-        <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
-        <li v-for="(asiento, indexAsiento) in fila" :key="indexAsiento" class="asientos-item">
-          <v-icon
-            :color="asiento.color"
-            @click="setOcupado(asiento)"
-          >fas fa-couch</v-icon>
-        </li>
-        <li class="asientos-letra">{{ numberToLetter(indexFila) }}</li>
-      </ul>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
@@ -73,12 +74,15 @@ export default {
   data () {
     return {
       asientos: [],
-      seleccionados: [],
-      reservados: []
+      seleccionados: []
+    }
+  },
+  watch: {
+    reservas () {
+      this.createAsientos()
     }
   },
   beforeMount () {
-    this.reservados = this.reservas.reduce((acc, i) => acc.concat(i.boletos), [])
     this.createAsientos()
   },
   methods: {
@@ -87,7 +91,8 @@ export default {
       for (let y = 0; y < this.filas; y++) {
         const fila = []
         for (let x = 0; x < this.columnas; x++) {
-          const isReservado = this.reservados.find(i => i.py === y && i.px === x)
+          const reservados = this.reservas.reduce((acc, i) => acc.concat(i.boletos), [])
+          const isReservado = reservados.find(i => i.py === y && i.px === x)
           if (isReservado) {
             fila.push({
               px: x,
@@ -149,6 +154,7 @@ export default {
   list-style: none;
 }
 .pantalla-container {
+  width: 100%;
   display: flex;
   justify-content: center;
   position: relative;
@@ -159,5 +165,16 @@ export default {
   height: 20px;
   width: 80%;
   background: #3F51B5;
+}
+@media only screen and (max-width: 600px) {
+  .asientos {
+    overflow-x: scroll;
+  }
+  .asientos-item {
+    margin: 0 5px;
+  }
+  .pantalla {
+    visibility: hidden;
+  }
 }
 </style>
