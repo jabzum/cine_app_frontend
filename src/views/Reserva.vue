@@ -1,116 +1,92 @@
 <template>
-  <v-app>
-    <div class="overflow-hidden">
-      <v-app-bar
-        app
-        dark
-        color="primary"
-      >
-        <!-- <template v-slot:img="{ props }">
-          <v-img
-            v-bind="props"
-            gradient="to top right, rgba(63,81,181,.8), rgba(92,107,192,.9)"
-          ></v-img>
-        </template> -->
-        <v-btn text fab @click="$router.go(-1)">
-          <v-icon>fas fa-arrow-left</v-icon>
-        </v-btn>
-        <v-toolbar-title>
-          Cine APP <v-icon>fas fa-film</v-icon>
-        </v-toolbar-title>
-      </v-app-bar>
-      <v-main>
-        <v-container>
-          <v-stepper v-model="step" :vertical="false">
-            <!-- =========================================================== -->
-            <!-- Steps -->
-            <!-- =========================================================== -->
-            <v-stepper-header>
-              <v-stepper-step
-                :complete="step > 1"
-                :step="1"
+  <v-card>
+    <v-stepper v-model="step" :vertical="false">
+      <!-- =========================================================== -->
+      <!-- Steps -->
+      <!-- =========================================================== -->
+      <v-stepper-header>
+        <v-stepper-step
+          :complete="step > 1"
+          :step="1"
+        >
+          Cantidad de boletos
+        </v-stepper-step>
+        <v-divider />
+        <v-stepper-step
+          :complete="step > 2"
+          :step="2"
+        >
+          Selecciona los asientos
+        </v-stepper-step>
+        <v-divider />
+        <v-stepper-step
+          :complete="step === 3"
+          :step="3"
+        >
+          Confirma tu reservación
+        </v-stepper-step>
+      </v-stepper-header>
+      <v-stepper-items>
+        <v-stepper-content :step="1">
+          <v-card>
+            <v-card-text v-if="funcion">
+              <v-row justify="center">
+                <v-col cols="12" md="4">
+                  <h1 class="h3 text-center">{{ funcion.sala.nombre }}</h1>
+                  <h2 class="h5 text-center my-3">Precio por boleto Q{{ funcion.precio }}</h2>
+                  <v-text-field
+                    label="Cantidad de boletos"
+                    v-model.number="reserva.boletos"
+                    prepend-icon="fas fa-minus"
+                    append-icon="fas fa-plus"
+                    @click:prepend="reserva.boletos = reserva.boletos > 0 ? reserva.boletos - 1 : 0"
+                    @click:append="reserva.boletos += 1"
+                    :error-messages="errBoletos"
+                  />
+                  <h3 class="h6 text-center my-3">Total Q{{ total }}</h3>
+                  <v-text-field
+                    label="Ingresa tu nombre"
+                    v-model="reserva.nombre"
+                    :error-messages="errNombre"
+                  />
+                </v-col>
+              </v-row>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                color="secondary"
+                @click="selectAsientos()"
               >
-                Cantidad de boletos
-              </v-stepper-step>
-              <v-divider />
-              <v-stepper-step
-                :complete="step > 2"
-                :step="2"
-              >
-                Selecciona los asientos
-              </v-stepper-step>
-              <v-divider />
-              <v-stepper-step
-                :complete="step === 3"
-                :step="3"
-              >
-                Confirma tu reservación
-              </v-stepper-step>
-            </v-stepper-header>
-            <v-stepper-items>
-              <v-stepper-content :step="1">
-                <v-card>
-                  <v-card-text v-if="funcion">
-                    <v-row justify="center">
-                      <v-col cols="12" md="4">
-                        <h1 class="h3 text-center">{{ funcion.sala.nombre }}</h1>
-                        <h2 class="h5 text-center my-3">Precio por boleto Q{{ funcion.precio }}</h2>
-                        <v-text-field
-                          label="Cantidad de boletos"
-                          v-model.number="reserva.boletos"
-                          prepend-icon="fas fa-minus"
-                          append-icon="fas fa-plus"
-                          @click:prepend="reserva.boletos = reserva.boletos > 0 ? reserva.boletos - 1 : 0"
-                          @click:append="reserva.boletos += 1"
-                          :error-messages="errBoletos"
-                        />
-                        <h3 class="h6 text-center my-3">Total Q{{ total }}</h3>
-                        <v-text-field
-                          label="Ingresa tu nombre"
-                          v-model="reserva.nombre"
-                          :error-messages="errNombre"
-                        />
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      color="secondary"
-                      @click="selectAsientos()"
-                    >
-                      Continuar
-                      <v-icon dark right>fas fa-arrow-right</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-stepper-content>
-              <v-stepper-content :step="2">
-                <SelectorAsientos
-                  v-if="funcion"
-                  :filas="funcion.sala.filas"
-                  :columnas="funcion.sala.columnas"
-                  :boletos="reserva.boletos"
-                  :reservas="reservas"
-                  @prev="step = 1"
-                  @next="setAsientos"
-                />
-              </v-stepper-content>
-              <v-stepper-content :step="3">
-                <ConfirmReserva
-                  :funcion="funcion"
-                  :boletos="reserva.boletos"
-                  @prev="step = 2"
-                  @save="saveReserva()"
-                />
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-container>
-      </v-main>
+                Continuar
+                <v-icon dark right>fas fa-arrow-right</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-stepper-content>
+        <v-stepper-content :step="2">
+          <SelectorAsientos
+            v-if="funcion"
+            :filas="funcion.sala.filas"
+            :columnas="funcion.sala.columnas"
+            :boletos="reserva.boletos"
+            :reservas="reservas"
+            @prev="step = 1"
+            @next="setAsientos"
+          />
+        </v-stepper-content>
+        <v-stepper-content :step="3">
+          <ConfirmReserva
+            :funcion="funcion"
+            :boletos="reserva.boletos"
+            @prev="step = 2"
+            @save="saveReserva()"
+          />
+        </v-stepper-content>
+      </v-stepper-items>
       <Loader :loading="loading" />
-    </div>
-  </v-app>
+    </v-stepper>
+  </v-card>
 </template>
 
 <script>
@@ -207,6 +183,9 @@ export default {
           boletos.push(this.$api.post('/boletos', boletoData))
         }
         await Promise.all(boletos)
+        const reservas = JSON.parse(localStorage.getItem('reservas')) || []
+        reservas.push(data.id)
+        localStorage.setItem('reservas', JSON.stringify(reservas))
         this.$router.push({
           name: 'ReservaDetail',
           params: { codigo }

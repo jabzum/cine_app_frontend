@@ -1,64 +1,40 @@
 <template>
-  <v-app>
-    <div class="overflow-hidden">
-      <v-app-bar
-        app
-        dark
-        color="primary"
-      >
-        <!-- <template v-slot:img="{ props }">
-          <v-img
-            v-bind="props"
-            gradient="to top right, rgba(63,81,181,.8), rgba(92,107,192,.9)"
-          ></v-img>
-        </template> -->
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        <v-toolbar-title>
-          Cine APP <v-icon>fas fa-film</v-icon>
-        </v-toolbar-title>
-      </v-app-bar>
-      <v-main>
-        <v-container>
-          <v-card>
-            <v-card-text v-if="reserva && pelicula && sala">
-              <h1 class="h1 text-center">
-                {{ pelicula.nombre }}
-              </h1>
+  <v-card>
+    <v-card-text v-if="reserva && pelicula && sala">
+      <h1 class="h1 text-center">
+        {{ pelicula.nombre }}
+      </h1>
+      <v-row justify="center">
+        <v-col cols="12" md="8">
+          <v-row class="flex-wrap-reverse">
+            <v-col cols="12" md="6">
+              <v-img :src="poster"></v-img>
+            </v-col>
+            <v-col cols="12" md="6">
               <v-row justify="center">
-                <v-col cols="12" md="8">
-                  <v-row class="flex-wrap-reverse">
-                    <v-col cols="12" md="6">
-                      <v-img :src="poster"></v-img>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-row justify="center">
-                        <img :src="qrimg" height="200px" width="auto" />
-                      </v-row>
-                      <p class="subtitle-1 my-1">
-                        <strong>Nombre: </strong>{{ reserva.nombre }}
-                      </p>
-                      <p class="subtitle-1 my-1">
-                        <strong>Fecha: </strong>{{ fecha }}
-                      </p>
-                      <p class="subtitle-1 my-1">
-                        <strong>Sala: </strong>{{ sala.nombre }}
-                      </p>
-                      <p class="subtitle-1 my-1">
-                        <strong>Boletos: </strong>{{ boletos }}
-                      </p>
-                      <p class="subtitle-1">
-                        <strong>Total: </strong>Q{{ total }}
-                      </p>
-                    </v-col>
-                  </v-row>
-                </v-col>
+                <img :src="qrimg" height="200px" width="auto" />
               </v-row>
-            </v-card-text>
-          </v-card>
-        </v-container>
-      </v-main>
-    </div>
-  </v-app>
+              <p class="subtitle-1 my-1">
+                <strong>Nombre: </strong>{{ reserva.nombre }}
+              </p>
+              <p class="subtitle-1 my-1">
+                <strong>Fecha: </strong>{{ fecha }}
+              </p>
+              <p class="subtitle-1 my-1">
+                <strong>Sala: </strong>{{ sala.nombre }}
+              </p>
+              <p class="subtitle-1 my-1">
+                <strong>Boletos: </strong>{{ boletos }}
+              </p>
+              <p class="subtitle-1">
+                <strong>Total: </strong>Q{{ total }}
+              </p>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

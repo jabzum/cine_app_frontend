@@ -1,44 +1,20 @@
 <template>
-  <v-app>
-    <div class="overflow-hidden">
-      <v-app-bar
-        app
-        dark
-        color="primary"
-      >
-        <!-- <template v-slot:img="{ props }">
-          <v-img
-            v-bind="props"
-            gradient="to top right, rgba(63,81,181,.8), rgba(92,107,192,.9)"
-          ></v-img>
-        </template> -->
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        <v-toolbar-title>
-          Cine APP <v-icon>fas fa-film</v-icon>
-        </v-toolbar-title>
-      </v-app-bar>
-      <v-main>
-        <v-container>
-          <v-row>
-            <v-col cols="12" md="8">
-              <Cartelera id="content" :items="peliculas" />
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-card>
-                <v-card-title class="primary white--text">
-                  Funciones
-                </v-card-title>
-                <v-card-text>
-                  <SelectFecha @input="getFunciones" />
-                  <ListFunciones :items="funciones" />
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-main>
-    </div>
-  </v-app>
+  <v-row class="flex-wrap-reverse">
+    <v-col cols="12" md="8">
+      <Cartelera id="content" :items="peliculas" />
+    </v-col>
+    <v-col cols="12" md="4">
+      <v-card>
+        <v-card-title class="primary white--text">
+          Funciones
+        </v-card-title>
+        <v-card-text>
+          <SelectFecha @input="getFunciones" />
+          <ListFunciones :items="funciones" />
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
