@@ -26,9 +26,38 @@
               <p class="subtitle-1 my-1">
                 <strong>Boletos: </strong>{{ boletos }}
               </p>
-              <p class="subtitle-1">
-                <strong>Total: </strong>Q{{ total }}
+              <p class="subtitle-1 my-1">
+                <strong>Subtotal boletos: </strong>Q{{ total }}
               </p>
+              <p class="subtitle-1 my-1">
+                <strong>Subtotal comidas y bebidas: </strong>Q{{ totalCombos }}
+              </p>
+              <v-divider />
+              <p class="subtitle-1 my-1 font-weight-bold text-right">
+                Total: Q{{ total+ totalCombos }}
+              </p>
+              <v-list>
+                <v-list-item
+                  v-for="item in combos"
+                  :key="item.id"
+                  three-line
+                >
+                  <v-list-item-avatar>
+                    <v-img :src="item.imagen" />
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ item.nombre }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      Precio: {{ item.precio }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      Cantidad: {{ item.cantidad }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
             </v-col>
           </v-row>
         </v-col>
@@ -52,7 +81,8 @@ export default {
       reserva: null,
       pelicula: null,
       sala: null,
-      qrimg: ''
+      qrimg: '',
+      combos: []
     }
   },
   computed: {
@@ -75,6 +105,12 @@ export default {
       }
       return 0
     },
+    totalCombos () {
+      if (this.reserva) {
+        return this.reserva.reserva_combos.reduce((acc, i) => acc + (i.cantidad * i.precio), 0)
+      }
+      return 0
+    },
     poster () {
       if (this.pelicula) {
         return `${process.env.VUE_APP_IMG}/w500/${this.pelicula.data.poster_path}`
@@ -86,6 +122,7 @@ export default {
     await this.getReserva()
     this.getPelicula()
     this.getSala()
+    this.getCombos()
     this.generateQRCode()
   },
   methods: {
@@ -100,6 +137,22 @@ export default {
     async getSala () {
       const { data } = await this.$api.get(`/salas/${this.reserva.funcion.sala}`)
       this.sala = data
+    },
+    async getCombos () {
+      const requests = []
+      for (const item of this.reserva.reserva_combos) {
+        requests.push(this.$api.get(`/combos/${item.combo}`))
+      }
+      const responses = await Promise.all(requests)
+      const combos = responses.map(i => i.data)
+      this.combos = combos.map((item, index) => {
+        return {
+          ...item,
+          imagen: process.env.VUE_APP_API + item.imagen.formats.small.url,
+          cantidad: this.reserva.reserva_combos[index].cantidad,
+          precio: this.reserva.reserva_combos[index].precio
+        }
+      })
     },
     async generateQRCode () {
       const url = `${process.env.VUE_APP_HOST}/#/reserva/${this.codigo}`

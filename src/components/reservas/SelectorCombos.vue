@@ -40,7 +40,7 @@
       </v-btn>
       <v-btn
         color="secondary"
-        @click="$emit('next')"
+        @click="$emit('next', selectedCombos)"
       >
         Continuar
         <v-icon right>fas fa-arrow-right</v-icon>
@@ -57,8 +57,8 @@ export default {
     }
   },
   computed: {
-    selected () {
-      return this.combos.map(i => ({
+    selectedCombos () {
+      return this.combos.filter(i => i.cantidad).map(i => ({
         id: i.id,
         precio: i.precio,
         cantidad: i.cantidad

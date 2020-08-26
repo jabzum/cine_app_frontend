@@ -91,13 +91,14 @@
         <v-stepper-content :step="3">
           <SelectorCombos
             @prev="step = 2"
-            @next="step = 4"
+            @next="setCombos"
           />
         </v-stepper-content>
         <v-stepper-content :step="4">
           <ConfirmReserva
             :funcion="funcion"
             :boletos="reserva.boletos"
+            :combos="combos"
             @prev="step = 3"
             @save="saveReserva()"
           />
@@ -139,7 +140,8 @@ export default {
       step: 1,
       reservas: [],
       disponibles: 0,
-      loading: false
+      loading: false,
+      combos: []
     }
   },
   computed: {
@@ -204,8 +206,9 @@ export default {
           boletos.push(this.$api.post('/boletos', boletoData))
         }
         await Promise.all(boletos)
+        await this.insertReservaCombos(data.id)
         const reservas = JSON.parse(localStorage.getItem('reservas')) || []
-        reservas.push(data.id)
+        reservas.unshift(data.id)
         localStorage.setItem('reservas', JSON.stringify(reservas))
         this.$router.push({
           name: 'ReservaDetail',
@@ -217,6 +220,22 @@ export default {
         console.log(err)
         alert('Ha ocurrido un error')
       }
+    },
+    async insertReservaCombos (reservaID) {
+      const requests = []
+      for (const i of this.combos) {
+        requests.push(this.$api.post('/reserva-combos', {
+          reserva: reservaID,
+          combo: i.id,
+          precio: i.precio,
+          cantidad: i.cantidad
+        }))
+      }
+      await Promise.all(requests)
+    },
+    setCombos (combos) {
+      this.combos = combos
+      this.step = 4
     },
     setAsientos (seleccionados) {
       this.asientosSelected = [...seleccionados]

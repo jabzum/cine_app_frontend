@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="white--text primary">
-      Cartelera
+      Películas
     </v-card-title>
     <v-card-text>
       <v-row>
