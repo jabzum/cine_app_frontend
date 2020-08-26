@@ -20,8 +20,15 @@
         </v-stepper-step>
         <v-divider />
         <v-stepper-step
-          :complete="step === 3"
+          :complete="step > 3"
           :step="3"
+        >
+          Comidas y bebidas
+        </v-stepper-step>
+        <v-divider />
+        <v-stepper-step
+          :complete="step === 4"
+          :step="4"
         >
           Confirma tu reservación
         </v-stepper-step>
@@ -34,21 +41,27 @@
                 <v-col cols="12" md="4">
                   <h1 class="h3 text-center">{{ funcion.sala.nombre }}</h1>
                   <h2 class="h5 text-center my-3">Precio por boleto Q{{ funcion.precio }}</h2>
-                  <v-text-field
-                    label="Cantidad de boletos"
-                    v-model.number="reserva.boletos"
-                    prepend-icon="fas fa-minus"
-                    append-icon="fas fa-plus"
-                    @click:prepend="reserva.boletos = reserva.boletos > 0 ? reserva.boletos - 1 : 0"
-                    @click:append="reserva.boletos += 1"
-                    :error-messages="errBoletos"
-                  />
-                  <h3 class="h6 text-center my-3">Total Q{{ total }}</h3>
+                  <div id="number-input">
+                    <v-input
+                      label="Cantidad de boletos"
+                      :error-messages="errBoletos"
+                    >
+                      <number-input
+                        v-model="reserva.boletos"
+                        placeholder="Cantidad de boletos"
+                        :min="1"
+                        :max="disponibles"
+                        center
+                        controls
+                      />
+                    </v-input>
+                  </div>
                   <v-text-field
                     label="Ingresa tu nombre"
                     v-model="reserva.nombre"
                     :error-messages="errNombre"
                   />
+                  <h3 class="h6 text-center my-3">Total Q{{ total }}</h3>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -76,10 +89,16 @@
           />
         </v-stepper-content>
         <v-stepper-content :step="3">
+          <SelectorCombos
+            @prev="step = 2"
+            @next="step = 4"
+          />
+        </v-stepper-content>
+        <v-stepper-content :step="4">
           <ConfirmReserva
             :funcion="funcion"
             :boletos="reserva.boletos"
-            @prev="step = 2"
+            @prev="step = 3"
             @save="saveReserva()"
           />
         </v-stepper-content>
@@ -93,11 +112,13 @@
 import shortid from 'shortid'
 import { integer, minValue, maxValue, required } from 'vuelidate/lib/validators'
 import SelectorAsientos from '@/components/reservas/SelectorAsientos'
+import SelectorCombos from '@/components/reservas/SelectorCombos'
 import ConfirmReserva from '@/components/reservas/ConfirmReserva'
 import Loader from '@/components/utils/Loader'
 export default {
   components: {
     SelectorAsientos,
+    SelectorCombos,
     ConfirmReserva,
     Loader
   },
@@ -223,3 +244,9 @@ export default {
   }
 }
 </script>
+
+<style>
+#number-input .v-input__slot {
+  display: unset;
+}
+</style>

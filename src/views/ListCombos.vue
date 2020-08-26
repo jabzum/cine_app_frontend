@@ -24,7 +24,7 @@
                   </v-row>
                 </v-col>
                 <v-col cols="12" md="6">
-                  <p class="subtitle-1">{{ item.descripcion }}</p>
+                  <p class="body-2">{{ item.descripcion }}</p>
                   <p class="subtitle-1"><strong>Precio: </strong>Q{{ item.precio }}</p>
                 </v-col>
               </v-row>
