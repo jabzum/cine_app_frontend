@@ -16,6 +16,10 @@
       <v-toolbar-title>
         Cine APP <v-icon>fas fa-film</v-icon>
       </v-toolbar-title>
+      <v-spacer />
+      <v-btn text :to="{ name: 'Catelera' }">
+        Cartelera
+      </v-btn>
     </v-app-bar>
     <v-navigation-drawer fixed v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
       <v-list dense nav>

@@ -32,30 +32,29 @@ const routes = [
     ]
   },
   {
-    path: '/pelicula',
+    path: '',
     component: () => import('@/views/layouts/Subview'),
     children: [
       {
-        path: '',
-        name: 'Pelicula',
-        component: () => import('@/views/Pelicula'),
-        props: (route) => ({
-          ...route.params
-        })
-      }
-    ]
-  },
-  {
-    path: '/nueva-reserva',
-    component: () => import('@/views/layouts/Subview'),
-    children: [
-      {
-        path: '',
+        path: '/nueva-reserva',
         name: 'Reserva',
         component: () => import('@/views/Reserva'),
         props: (route) => ({
           ...route.params
         })
+      },
+      {
+        path: '/sinopsis',
+        name: 'Pelicula',
+        component: () => import('@/views/Pelicula'),
+        props: (route) => ({
+          ...route.params
+        })
+      },
+      {
+        path: '/catelera',
+        name: 'Catelera',
+        component: () => import('@/views/Cartelera')
       }
     ]
   }

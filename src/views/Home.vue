@@ -1,7 +1,7 @@
 <template>
   <v-row class="flex-wrap-reverse">
     <v-col cols="12" md="8">
-      <Cartelera id="content" :items="peliculas" />
+      <ListPeliculas id="content" :items="peliculas" />
     </v-col>
     <v-col cols="12" md="4">
       <v-card>
@@ -19,13 +19,13 @@
 
 <script>
 import dayjs from 'dayjs'
-import Cartelera from '@/components/Cartelera'
+import ListPeliculas from '@/components/ListPeliculas'
 import ListFunciones from '@/components/ListFunciones'
 import SelectFecha from '@/components/SelectFecha'
 export default {
   name: 'Home',
   components: {
-    Cartelera,
+    ListPeliculas,
     ListFunciones,
     SelectFecha
   },
