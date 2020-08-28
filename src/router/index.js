@@ -52,8 +52,8 @@ const routes = [
         })
       },
       {
-        path: '/catelera',
-        name: 'Catelera',
+        path: '/cartelera',
+        name: 'Cartelera',
         component: () => import('@/views/Cartelera')
       }
     ]

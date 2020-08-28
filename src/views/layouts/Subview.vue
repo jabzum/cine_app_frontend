@@ -15,7 +15,7 @@
         <v-icon>fas fa-arrow-left</v-icon>
       </v-btn>
       <v-toolbar-title>
-        Cine APP <v-icon>fas fa-film</v-icon>
+        Cine App
       </v-toolbar-title>
     </v-app-bar>
     <v-main>

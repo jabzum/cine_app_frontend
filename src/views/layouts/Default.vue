@@ -14,10 +14,10 @@
       </template> -->
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>
-        Cine APP <v-icon>fas fa-film</v-icon>
+        Cine App
       </v-toolbar-title>
       <v-spacer />
-      <v-btn text :to="{ name: 'Catelera' }">
+      <v-btn text :to="{ name: 'Cartelera' }" class="d-none d-md-flex">
         Cartelera
       </v-btn>
     </v-app-bar>
@@ -53,6 +53,11 @@ export default {
           text: 'Inicio',
           icon: 'fas fa-home',
           to: { name: 'Home' }
+        },
+        {
+          text: 'Catelera',
+          icon: 'fas fa-calendar-alt',
+          to: { name: 'Cartelera' }
         },
         {
           text: 'Mis reservaciones',

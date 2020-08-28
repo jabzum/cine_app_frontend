@@ -8,13 +8,13 @@
         <v-col
           v-for="item in items"
           :key="item.id"
-          cols="6"
+          cols="12"
           md="4"
           xl="3"
         >
           <v-card>
             <v-img :src="item.poster"></v-img>
-            <div class="d-flex align-center fill-height" style="height: 70px;">
+            <div class="d-flex align-center fill-height" style="height: 80px;">
               <v-card-title class="text-center subtitle-1">{{ item.nombre }}</v-card-title>
             </div>
             <v-rating
