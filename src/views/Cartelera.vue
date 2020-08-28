@@ -23,7 +23,7 @@
         <v-col v-for="item in funciones" :key="item.id" cols="12" md="6">
           <v-card>
             <div class="d-flex justify-space-between">
-              <img :src="item.poster" width="25%" height="auto" />
+              <img :src="item.poster" width="30%" height="auto" />
               <div class="pa-6" style="width: 60%">
                 <p class="body-1 my-1"><strong>{{ item.pelicula.nombre }}</strong></p>
                 <p class="body-1 my-1"><strong>Hora: </strong>{{ item.hora }}</p>

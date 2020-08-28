@@ -8,17 +8,17 @@
           <v-list-item-title>
             {{ item[0].pelicula.nombre }}
           </v-list-item-title>
-          <v-list-item-subtitle>
+          <div class="d-flex flex-wrap">
             <v-chip
               v-for="(funcion, i) in item"
               :key="i"
               color="secondary"
-              class="mr-1"
+              class="mr-1 my-1"
               @click="$router.push({ name: 'Reserva', params: { funcionID: funcion.id } })"
             >
               {{ funcion.sala.nombre }} - {{ funcion.hora_inicio }}
             </v-chip>
-          </v-list-item-subtitle>
+          </div>
         </v-list-item-content>
       </v-list-item>
     </v-list>
