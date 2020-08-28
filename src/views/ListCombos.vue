@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     async getCombos () {
-      const { data } = await this.$api.get('/combos')
+      const { data } = await this.$api.get('/combos?_sort=nombre:ASC')
       this.combos = data.map(i => ({
         ...i,
         imagen: process.env.VUE_APP_API + i.imagen.formats.small.url

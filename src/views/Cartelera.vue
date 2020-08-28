@@ -29,6 +29,12 @@
                 <p class="body-1 my-1"><strong>Hora: </strong>{{ item.hora }}</p>
                 <p class="body-1 my-1"><strong>Sala: </strong>{{ item.sala.nombre }}</p>
                 <p class="body-1 my-1"><strong>Precio: </strong>Q{{ item.precio }}</p>
+                <v-btn
+                  color="secondary"
+                  @click="$router.push({ name: 'Reserva', params: { funcionID: item.id } })"
+                >
+                  Reservar
+                </v-btn>
               </div>
             </div>
           </v-card>

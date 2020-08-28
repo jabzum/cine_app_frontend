@@ -189,36 +189,41 @@ export default {
     async saveReserva () {
       try {
         this.loading = true
-        const codigo = shortid.generate()
-        const reserva = {
-          codigo,
-          funcion: this.funcionID,
-          nombre: this.reserva.nombre
-        }
-        const { data } = await this.$api.post('/reservas', reserva)
-        const boletos = []
-        for (const boleto of this.asientosSelected) {
-          const boletoData = {
-            px: boleto.px,
-            py: boleto.py,
-            reserva: data.id
+        if (await this.validateBoletos()) {
+          const codigo = shortid.generate()
+          const reserva = {
+            codigo,
+            funcion: this.funcionID,
+            nombre: this.reserva.nombre
           }
-          boletos.push(this.$api.post('/boletos', boletoData))
+          const { data } = await this.$api.post('/reservas', reserva)
+          const boletos = []
+          for (const boleto of this.asientosSelected) {
+            const boletoData = {
+              px: boleto.px,
+              py: boleto.py,
+              reserva: data.id
+            }
+            boletos.push(this.$api.post('/boletos', boletoData))
+          }
+          await Promise.all(boletos)
+          await this.insertReservaCombos(data.id)
+          const reservas = JSON.parse(localStorage.getItem('reservas')) || []
+          reservas.unshift(data.id)
+          localStorage.setItem('reservas', JSON.stringify(reservas))
+          this.$router.push({
+            name: 'ReservaDetail',
+            params: { codigo }
+          })
         }
-        await Promise.all(boletos)
-        await this.insertReservaCombos(data.id)
-        const reservas = JSON.parse(localStorage.getItem('reservas')) || []
-        reservas.unshift(data.id)
-        localStorage.setItem('reservas', JSON.stringify(reservas))
-        this.$router.push({
-          name: 'ReservaDetail',
-          params: { codigo }
-        })
         this.loading = false
       } catch (err) {
         this.loading = false
-        console.log(err)
-        alert('Ha ocurrido un error')
+        if (err.response.status === 409) {
+          alert('Los asientos seleccionados ya no estan disponibles')
+        } else {
+          alert('Ha ocurrido un error')
+        }
       }
     },
     async insertReservaCombos (reservaID) {
@@ -232,6 +237,14 @@ export default {
         }))
       }
       await Promise.all(requests)
+    },
+    async validateBoletos () {
+      const funcionBoletos = {
+        funcion: this.funcionID,
+        boletos: this.asientosSelected.map(i => ({ px: i.px, py: i.py }))
+      }
+      const { data } = await this.$api.post('/reservas/validate', funcionBoletos)
+      return data.available
     },
     setCombos (combos) {
       this.combos = combos

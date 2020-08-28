@@ -27,6 +27,16 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-alert
+        v-if="!reservas.length"
+        dark
+        text
+        dense
+        color="info"
+        type="info"
+      >
+        No hay reservaciones registradas
+      </v-alert>
     </v-card-text>
   </v-card>
 </template>

@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     async getCartelera () {
-      const { data } = await this.$api.get('/peliculas?estado_eq=activo')
+      const { data } = await this.$api.get('/peliculas?estado_eq=activo&_sort=nombre:ASC')
       const urlImg = process.env.VUE_APP_IMG
       this.peliculas = data.map(i => ({
         ...i,
